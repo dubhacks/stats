@@ -64,6 +64,10 @@ const cyan = "#32bebc";
   background-color: #32bebc !important;
 }
 
+.navy-blue-background {
+  background-color: #2b39bf !important;
+}
+
 .white-background {
   background-color: #ffffff !important;
 }
