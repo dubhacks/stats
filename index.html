@@ -18,6 +18,12 @@
     <link rel="stylesheet" href="./dh-stats-page-styles.css">
 </head>
 
+<style>
+    .row {
+        margin-left: 0px
+    }
+    </style>
+
 <body>
     <section id="dh-stats-welcome-section" class="white-text">
         <a href="https://dubhacks.co" target="_blank"><img id="top-dubhacks-image" src="./images/logo.svg" /></a>
@@ -108,7 +114,7 @@
             </div>
         </section>
 
-        <section class="general-stats-wrapper stats-wrapper white-text pink-background">
+        <section class="general-stats-wrapper stats-wrapper white-text pink-background" id = 'general-stats'>
             <div class="container">
                 <div class="row">
                     <div class="col-sm-6">
@@ -148,7 +154,7 @@
                 <h3 class="semi-medium-title">Gender</h3>
 
                 <div class="row">
-                    <div class="col-sm-6">
+                    <div class="col-sm-6" id = 'gender-stats-all-col' >
                         <h4 class="small-title">All Applicants</h4>
 
                         <span class="stat-item"><h2 class="big-title" id="dh-all-female-stat">60%</h2>
@@ -163,7 +169,7 @@
 
                             <p class="semi-medium-title stat-annotation">Non-Binary</p></span>
                     </div>
-                    <div class="col-sm-6">
+                    <div class="col-sm-6" id = 'gender-stats-uw-col' >
                         <h4 class="small-title">UW Applicants</h4>
 
                         <span class="stat-item"><h2 class="big-title" id="dh-uw-female-stat">60%</h2>
@@ -187,13 +193,13 @@
                 <h3 class="semi-medium-title">Ethnicity</h3>
 
                 <div class="row">
-                    <div class="col-sm-6">
+                    <div class="col-sm-6" id = 'academic-stats-all-col'>
                         <h4 class="small-title">All Applicants</h4>
 
                         <canvas id="all-ethnicity-chart" width="350" height="400" class="chart-canvas white-text"></canvas>
 
                     </div>
-                    <div class="col-sm-6">
+                    <div class="col-sm-6" id = 'academic-stats-uw-col'>
                         <h4 class="small-title">UW Applicants</h4>
 
                         <canvas id="uw-ethnicity-chart" width="350" height="400" class="chart-canvas"></canvas>
@@ -202,11 +208,17 @@
             </div>
         </section>
 
-        <section class="stats-wrapper white-text navy-blue-background">
+        <section class="stats-wrapper white-text navy-blue-background" id = 'class-stats'>
             <div class="container">
                 <h3 id="class-stats-title" class="semi-medium-title white-text">Class Percentages</h3>
 
                 <div class="row">
+                    <div class="w-100">
+                        <span class="stat-item"><h2 class="big-title" id="dh-highschool-stat">60%</h2>
+
+                            <p class="semi-medium-title stat-annotation">High School</p></span>
+                    </div>
+
                     <div class="col-sm-6">
                         <span class="stat-item"><h2 class="big-title" id="dh-freshman-stat">60%</h2>
 
@@ -251,7 +263,7 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.4.0/Chart.min.js"></script>
 
-    <script src="./data.js"></script>
+    <script src="./data_.js"></script>
 
     <script>
         $('.dropdown-item').on('click', function (e) {
@@ -512,7 +524,19 @@
                 values.push(dict[k]);
             }
 
-            return keys, values
+            return [keys, values]
+        }
+
+        // checks if all the values given are undefined
+        function allUndefined(values) {
+            let areAllUndefined = true;
+            values.forEach((val) => {
+                if (val !== undefined) {
+                    areAllUndefined = false;
+                }
+            })
+
+            return areAllUndefined;
         }
 
         function setData(year) {
@@ -520,63 +544,113 @@
 
             document.getElementById("year-dropdown-title-button").innerHTML = `<h6 data-year='${year}' data-year-stats-id='dh-stats-${year}' class = 'semi-medium-title'>DubHacks ${year}</h6>`;
 
-            // General Stats    
+            // Overview Stats    
 
-            document.getElementById("dh-applicants-stat").innerText = payload.stats.totalApplicants;
+            document.getElementById("dh-applicants-stat").innerText = payload.stats.total?.numApplicants || "-";
 
-            document.getElementById("dh-total-acceptance-stat").innerText = payload.stats.totalAcceptancePercentage;
+            document.getElementById("dh-total-acceptance-stat").innerText = (payload.stats.total?.acceptanceRate || "-") + "%";
 
-            document.getElementById("dh-uw-acceptance-stat").innerText = payload.stats.uwAcceptancePercentage;
+            document.getElementById("dh-uw-acceptance-stat").innerText = (payload.stats.uw?.acceptanceRate || "-") + "%";
 
-            document.getElementById("dh-first-gen-stat").innerText = payload.stats.firstGenPercentage;
+            // General stats
+            if (allUndefined([payload.stats.total?.studentFirstGen, payload.stats.total?.studentReturning])) {
+                document.getElementById("general-stats").style.display = "none";
+            } else {
+                document.getElementById("general-stats").style.display = "block";
+                
+                document.getElementById("dh-first-gen-stat").innerText = (payload.stats.total.studentFirstGen || "-") + "%";
 
-            document.getElementById("dh-returning-stat").innerText = payload.stats.returningPercentage;
+                document.getElementById("dh-returning-stat").innerText = (payload.stats.total.studentReturning || "-") + "%";
+            }
 
-            // Top Schools
-            dh_schools_chart.data.labels = payload.applicants.school.keys;
-            dh_schools_chart.data.datasets[0].data = payload.applicants.school.values;
-            dh_schools_chart.update();
+             // Gender
+             document.getElementById("dh-all-male-stat").innerText = (payload.stats.total?.genderMale || "-") + "%";
 
-            // Top Majors
-            dh_majors_chart.data.labels = payload.applicants.major.keys;
-            dh_majors_chart.data.datasets[0].data = payload.applicants.major.values;
-            dh_majors_chart.update();
+            document.getElementById("dh-all-female-stat").innerText = (payload.stats.total?.genderFemale || "-") + "%";
 
-            // Gender
-            document.getElementById("dh-all-male-stat").innerText = payload.stats.totalMalePercentage;
+            document.getElementById("dh-all-non-binary-stat").innerText = (payload.stats.total?.genderNonBinary || "-") + "%";
 
-            document.getElementById("dh-all-female-stat").innerText = payload.stats.totalFemalePercentage;
+            if (allUndefined([payload.stats.uw?.genderMale, payload.stats.uw?.genderFemale, payload.stats.uw?.genderNonBinary])) {
+                document.getElementById("gender-stats-uw-col").style.display = 'none';
 
-            document.getElementById("dh-all-non-binary-stat").innerText = payload.stats.totalNonBinaryPercentage;
+                document.getElementById("gender-stats-all-col").className = "col-sm-12";
+            } else {
+                document.getElementById("gender-stats-uw-col").style.display = 'initial';
 
-            document.getElementById("dh-uw-male-stat").innerText = payload.stats.uwMalePercentage;
+                document.getElementById("gender-stats-all-col").className = "col-sm-6";
 
-            document.getElementById("dh-uw-female-stat").innerText = payload.stats.uwFemalePercentage;
+                document.getElementById("dh-uw-male-stat").innerText = (payload.stats.uw?.genderMale || "-") + '%';
 
-            document.getElementById("dh-uw-non-binary-stat").innerText = payload.stats.uwNonBinaryPercentage;
+                document.getElementById("dh-uw-female-stat").innerText = (payload.stats.uw?.genderFemale || "-") + '%';
 
-            // Ethnicity
-            dh_all_ethnicity_chart.data.labels = payload.applicants.totalEthnicity.keys;
-            dh_all_ethnicity_chart.data.datasets[0].data = payload.applicants.totalEthnicity.values;
-            dh_all_ethnicity_chart.update();
-
-            dh_uw_ethnicity_chart.data.labels = payload.applicants.uwEthnicity.keys;
-            dh_uw_ethnicity_chart.data.datasets[0].data = payload.applicants.uwEthnicity.values;
-            dh_uw_ethnicity_chart.update();
+                document.getElementById("dh-uw-non-binary-stat").innerText = (payload.stats.uw?.genderNonBinary || "-") + '%';
+            }
 
             // Class standing
 
-            document.getElementById("dh-freshman-stat").innerText = payload.stats.freshmanPercentage;
+            if (allUndefined([payload.stats.total?.yearFreshman, payload.stats.total?.yearHighSchool, payload.stats.total?.yearSophomore, payload.stats.total?.yearJunior, payload.stats.total?.yearSenior])) {
+                // hide class stats
+                document.getElementById("class-stats").style.display = 'none';
+            } else {
+                document.getElementById("class-stats").style.display = 'block';
 
-            document.getElementById("dh-sophomore-stat").innerText = payload.stats.sophomorePercentage;
+                document.getElementById("dh-highschool-stat").innerText = (payload.stats.total?.yearHighSchool || "-") + "%";
 
-            document.getElementById("dh-junior-stat").innerText = payload.stats.juniorPercentage;
+                document.getElementById("dh-freshman-stat").innerText = (payload.stats.total?.yearFreshman || "-") + "%";
 
-            document.getElementById("dh-senior-stat").innerText = payload.stats.seniorPercentage;
+                document.getElementById("dh-sophomore-stat").innerText = (payload.stats.total?.yearSophomore || "-") + "%";
+
+                document.getElementById("dh-junior-stat").innerText = (payload.stats.total?.yearJunior || "-") + "%";
+
+                document.getElementById("dh-senior-stat").innerText = (payload.stats.total?.yearSenior || "-") + "%";
+
+            }
+
+            
+            // Top Schools
+            let [schoolLabels, schoolData] = splitDict(payload.attendees.school);
+
+            console.log(schoolLabels, schoolData);
+            dh_schools_chart.data.labels = schoolLabels;
+            dh_schools_chart.data.datasets[0].data = schoolData
+            dh_schools_chart.update();
+
+            // Top Majors
+            let [majorLabels, majorData] = splitDict(payload.attendees.totalMajor);
+
+            dh_majors_chart.data.labels = majorLabels
+            dh_majors_chart.data.datasets[0].data = majorData
+            dh_majors_chart.update();
+
+            // Ethnicity
+            let [totalEthnicityLabels, totalEthnicityData] = splitDict(payload.attendees.totalEthnicity);
+            dh_all_ethnicity_chart.data.labels = totalEthnicityLabels
+            dh_all_ethnicity_chart.data.datasets[0].data = totalEthnicityData
+            dh_all_ethnicity_chart.update();
+
+            if (payload.attendees.uwEthnicity === undefined) {
+                document.getElementById("academic-stats-uw-col").style.display = 'none';
+
+                document.getElementById("academic-stats-all-col").className = "col-sm-12";
+            } else {
+                document.getElementById("academic-stats-uw-col").style.display = 'initial';
+
+                document.getElementById("academic-stats-all-col").className = "col-sm-6";
+
+                let [uwEthnicityLabels, uwEthnicityData] = splitDict(payload.attendees.uwEthnicity);
+            
+                dh_uw_ethnicity_chart.data.labels = uwEthnicityLabels
+                dh_uw_ethnicity_chart.data.datasets[0].data =  uwEthnicityData
+                dh_uw_ethnicity_chart.update();
+            }
                
         }
 
         function set2019Data() {
+            setData(2019);
+        }
+
+        function set2020Data() {
             setData(2020);
         }
 
@@ -766,6 +840,10 @@
             document.getElementById("dh-senior-stat").innerHTML = "11%";
         }
 
-        set2019Data();
+        window.onload = () => {
+            console.log(data);
+            set2020Data();
+
+        };
     </script>
 </body>
