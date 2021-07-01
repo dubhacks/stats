@@ -18,6 +18,12 @@
     <link rel="stylesheet" href="./dh-stats-page-styles.css">
 </head>
 
+<style>
+    .row {
+        margin-left: 0px
+    }
+    </style>
+
 <body>
     <section id="dh-stats-welcome-section" class="white-text">
         <a href="https://dubhacks.co" target="_blank"><img id="top-dubhacks-image" src="./images/logo.svg" /></a>
@@ -80,8 +86,11 @@
                             data-year-stats-id="dh-stats-2017" class="semi-medium-title">2017</h6></a>
                     <a class="dropdown-item" data-year="2018" data-year-stats-id="dh-stats-2018" href="#"><h6 data-year="2018"
                             data-year-stats-id="dh-stats-2018" class="semi-medium-title">2018</h6></a>
-                    <a class="dropdown-item active" data-year="2019" data-year-stats-id="dh-stats-2019" href="#"><h6 data-year="2019"
+                    <a class="dropdown-item" data-year="2019" data-year-stats-id="dh-stats-2019" href="#"><h6 data-year="2019"
                             data-year-stats-id="dh-stats-2019" class="semi-medium-title">2019</h6></a>
+                        
+                    <a class="dropdown-item active" data-year="2020" data-year-stats-id="dh-stats-2020" href="#"><h6 data-year="2020"
+                        data-year-stats-id="dh-stats-2020" class="semi-medium-title">2020</h6></a>
                 </div>
             </div>
         </nav>
@@ -108,7 +117,7 @@
             </div>
         </section>
 
-        <section class="general-stats-wrapper stats-wrapper white-text pink-background">
+        <section class="general-stats-wrapper stats-wrapper white-text pink-background" id = 'general-stats'>
             <div class="container">
                 <div class="row">
                     <div class="col-sm-6">
@@ -140,6 +149,21 @@
                         <canvas id="dh-top-majors-chart" width="350" height="400" class="chart-canvas"></canvas>
                     </div>
                 </div>
+
+                <div class="row" id = 'career-interests'>
+                    <div class="col-sm-3"></div>
+
+                    <div class="col-sm-6">
+                        <h3 class="semi-medium-title white-text">Top Career Interests</h3>
+
+                        <canvas id="dh-top-careers-chart" width="350" height="400" class="chart-canvas"></canvas>
+
+                    </div>
+
+                    <div class="col-sm-3"></div>
+
+
+                </div>
             </div>
         </section>
 
@@ -148,7 +172,7 @@
                 <h3 class="semi-medium-title">Gender</h3>
 
                 <div class="row">
-                    <div class="col-sm-6">
+                    <div class="col-sm-6" id = 'gender-stats-all-col' >
                         <h4 class="small-title">All Applicants</h4>
 
                         <span class="stat-item"><h2 class="big-title" id="dh-all-female-stat">60%</h2>
@@ -163,7 +187,7 @@
 
                             <p class="semi-medium-title stat-annotation">Non-Binary</p></span>
                     </div>
-                    <div class="col-sm-6">
+                    <div class="col-sm-6" id = 'gender-stats-uw-col' >
                         <h4 class="small-title">UW Applicants</h4>
 
                         <span class="stat-item"><h2 class="big-title" id="dh-uw-female-stat">60%</h2>
@@ -182,18 +206,18 @@
             </div>
         </section>
 
-        <section class="academic-stats-wrapper stats-wrapper white-text blue-background">
+        <section class="academic-stats-wrapper stats-wrapper white-text blue-background" id = 'ethnicity-stats'>
             <div class="container">
                 <h3 class="semi-medium-title">Ethnicity</h3>
 
                 <div class="row">
-                    <div class="col-sm-6">
+                    <div class="col-sm-6" id = 'academic-stats-all-col'>
                         <h4 class="small-title">All Applicants</h4>
 
                         <canvas id="all-ethnicity-chart" width="350" height="400" class="chart-canvas white-text"></canvas>
 
                     </div>
-                    <div class="col-sm-6">
+                    <div class="col-sm-6" id = 'academic-stats-uw-col'>
                         <h4 class="small-title">UW Applicants</h4>
 
                         <canvas id="uw-ethnicity-chart" width="350" height="400" class="chart-canvas"></canvas>
@@ -202,11 +226,17 @@
             </div>
         </section>
 
-        <section class="stats-wrapper white-text navy-blue-background">
+        <section class="stats-wrapper white-text navy-blue-background" id = 'class-stats'>
             <div class="container">
                 <h3 id="class-stats-title" class="semi-medium-title white-text">Class Percentages</h3>
 
                 <div class="row">
+                    <div class="w-100">
+                        <span class="stat-item"><h2 class="big-title" id="dh-highschool-stat">60%</h2>
+
+                            <p class="semi-medium-title stat-annotation">High School</p></span>
+                    </div>
+
                     <div class="col-sm-6">
                         <span class="stat-item"><h2 class="big-title" id="dh-freshman-stat">60%</h2>
 
@@ -251,6 +281,8 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.4.0/Chart.min.js"></script>
 
+    <script src="./data_.js"></script>
+
     <script>
         $('.dropdown-item').on('click', function (e) {
             e.preventDefault();
@@ -259,19 +291,22 @@
             var year = e.target.getAttribute('data-year');
 
             if (year == "2015") {
-                set2015Data();
+                setData(2015);
             }
             else if (year == "2016") {
-                set2016Data();
+                setData(2016);
             }
             else if (year == "2017") {
-                set2017Data();
+                setData(2017);
             }
             else if (year == "2018") {
-                set2018Data();
+                setData(2018);
+            }
+            else if (year == "2019") {
+                setData(2019);
             }
             else {
-                set2019Data();
+                setData(2020);
             }
 
             $('.dropdown-item').each(function () {
@@ -294,6 +329,54 @@
 
         var dh_schools_ctx = document.getElementById("dh-top-schools-chart");
         var dh_schools_chart = new Chart(dh_schools_ctx, {
+            type: 'horizontalBar',
+            data: {
+                labels: ["University of Washington", "University of British Columbia", "UC Berkeley", "University of Southern California", "University of Texas - Austin"],
+                datasets: [{
+                    label: '% of Applicants',
+                    data: [55, 8, 2, 1, 1],
+                    backgroundColor: [
+                        'rgba(237, 71, 142, 0.2)',
+                        'rgba(237, 71, 142, 0.2)',
+                        'rgba(237, 71, 142, 0.2)',
+                        'rgba(237, 71, 142, 0.2)',
+                        'rgba(237, 71, 142, 0.2)'
+                    ],
+                    borderColor: [
+                        'rgba(237,71,142,1)',
+                        'rgba(237,71,142,1)',
+                        'rgba(237,71,142,1)',
+                        'rgba(237,71,142,1)',
+                        'rgba(237,71,142,1)'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                legend: {
+                    labels: {
+                        fontColor: "white",
+                        fontSize: 18
+                    }
+                },
+                scales: {
+                    yAxes: [{
+                        ticks: {
+                            fontColor: "#fff",
+                            beginAtZero: true
+                        }
+                    }],
+                    xAxes: [{
+                        ticks: {
+                            fontColor: "#fff"
+                        }
+                    }]
+                }
+            }
+        });
+
+        var dh_careers_ctx = document.getElementById("dh-top-careers-chart");
+        var dh_careers_chart = new Chart(dh_careers_ctx, {
             type: 'horizontalBar',
             data: {
                 labels: ["University of Washington", "University of British Columbia", "UC Berkeley", "University of Southern California", "University of Texas - Austin"],
@@ -500,190 +583,165 @@
             }
         });
 
-        function set2019Data() {
-            document.getElementById("year-dropdown-title-button").innerHTML = "<h6 data-year='2018' data-year-stats-id='dh-stats-2019' class='semi-medium-title'>DubHacks 2019</h6>";
+        // splits a dictionary into an array of keys and an array of values
+        function splitDict(dict) {
+            let keys = [];
+            let values = [];
 
-            // General Stats    
+            for (let k in dict) {
+                keys.push(k)
+                values.push(dict[k]);
+            }
 
-            document.getElementById("dh-applicants-stat").innerHTML = "1602";
-
-            document.getElementById("dh-total-acceptance-stat").innerHTML = "65%";
-
-            document.getElementById("dh-uw-acceptance-stat").innerHTML = "85%";
-
-            document.getElementById("dh-first-gen-stat").innerHTML = "21%";
-
-            document.getElementById("dh-returning-stat").innerHTML = "80%";
-
-            // Top Schools
-
-            dh_schools_chart.data.datasets[0].data = [55, 7, 3, 3, 2];
-            dh_schools_chart.data.labels = ["University of Washington", "University of British Columbia", "UC Berkeley", "Washington State University", "University of California-Irvine"];
-            dh_schools_chart.update();
-
-            // Top Majors
-
-            dh_majors_chart.data.datasets[0].data = [72, 9, 6, 5, 1];
-            dh_majors_chart.data.labels = ["Computer Science", "Computer Engineering", "Electrical Engineering", "Informatics", "Mathematics and Computer Science"];
-            dh_majors_chart.update();
-
-            // Gender
-
-            document.getElementById("dh-all-male-stat").innerHTML = "60%";
-
-            document.getElementById("dh-all-female-stat").innerHTML = "33%";
-
-            document.getElementById("dh-all-non-binary-stat").innerHTML = "7%";
-
-            document.getElementById("dh-uw-male-stat").innerHTML = "58%";
-
-            document.getElementById("dh-uw-female-stat").innerHTML = "33%";
-
-            document.getElementById("dh-uw-non-binary-stat").innerHTML = "9%";
-
-            // Ethnicity
-
-            dh_all_ethnicity_chart.data.datasets[0].data = [45, 21, 14, 8, 2, 2];
-            dh_all_ethnicity_chart.data.labels = ["East Asian or Asian-American", "South Asian or Asian-American", "White or Euro-American", "Other", "LatinX or Hispanic-American", "Black, Afro-Caribbean, or African-American"];
-            dh_all_ethnicity_chart.update();
-
-            dh_uw_ethnicity_chart.data.datasets[0].data = [48, 22, 13, 1, 3, 1];
-            dh_uw_ethnicity_chart.data.labels = ["East Asian or Asian-American", "South Asian or Asian-American", "White or Euro-American", "Other", "LatinX or Hispanic-American", "Black, Afro-Caribbean, or African-American"];
-            dh_uw_ethnicity_chart.update();
-
-            // Class standing
-
-            document.getElementById("dh-freshman-stat").innerHTML = "15%";
-
-            document.getElementById("dh-sophomore-stat").innerHTML = "29%";
-
-            document.getElementById("dh-junior-stat").innerHTML = "33%";
-
-            document.getElementById("dh-senior-stat").innerHTML = "24%";
+            return [keys, values]
         }
 
-        function set2018Data() {
-            document.getElementById("year-dropdown-title-button").innerHTML = "<h6 data-year='2018' data-year-stats-id='dh-stats-2018' class='semi-medium-title'>DubHacks 2018</h6>";
+        // checks if all the values given are undefined
+        function allUndefined(values) {
+            let areAllUndefined = true;
+            values.forEach((val) => {
+                if (val !== undefined) {
+                    areAllUndefined = false;
+                }
+            })
 
-            // General Stats    
+            return areAllUndefined;
+        }
 
-            document.getElementById("dh-applicants-stat").innerHTML = "1300";
+        function setData(year) {
+            const payload = data[year];
 
-            document.getElementById("dh-total-acceptance-stat").innerHTML = "63%";
+            document.getElementById("year-dropdown-title-button").innerHTML = `<h6 data-year='${year}' data-year-stats-id='dh-stats-${year}' class = 'semi-medium-title'>DubHacks ${year}</h6>`;
 
-            document.getElementById("dh-uw-acceptance-stat").innerHTML = "74%";
+            // Overview Stats    
 
-            document.getElementById("dh-first-gen-stat").innerHTML = "24%";
+            document.getElementById("dh-applicants-stat").innerText = payload.stats.total?.numApplicants || "-";
 
-            document.getElementById("dh-returning-stat").innerHTML = "20%";
+            document.getElementById("dh-total-acceptance-stat").innerText = (payload.stats.total?.acceptanceRate || "-") + "%";
 
-            // Top Schools
+            document.getElementById("dh-uw-acceptance-stat").innerText = (payload.stats.uw?.acceptanceRate || "-") + "%";
 
-            dh_schools_chart.data.datasets[0].data = [55, 8, 2, 1, 1];
-            dh_schools_chart.data.labels = ["University of Washington", "University of British Columbia", "UC Berkeley", "University of Southern California", "University of Texas - Austin"];
-            dh_schools_chart.update();
+            // General stats
+            if (allUndefined([payload.stats.total?.studentFirstGen, payload.stats.total?.studentReturning])) {
+                document.getElementById("general-stats").style.display = "none";
+            } else {
+                document.getElementById("general-stats").style.display = "block";
+                
+                document.getElementById("dh-first-gen-stat").innerText = (payload.stats.total.studentFirstGen || "-") + "%";
 
-            // Top Majors
+                document.getElementById("dh-returning-stat").innerText = (payload.stats.total.studentReturning || "-") + "%";
+            }
 
-            dh_majors_chart.data.datasets[0].data = [43, 7, 5, 1, 1];
-            dh_majors_chart.data.labels = ["Computer Science", "Informatics", "Computer Engineering", "Pre-Science", "Electrical Engineering"];
-            dh_majors_chart.update();
+             // Gender
+             document.getElementById("dh-all-male-stat").innerText = (payload.stats.total?.genderMale || "-") + "%";
 
-            // Gender
+            document.getElementById("dh-all-female-stat").innerText = (payload.stats.total?.genderFemale || "-") + "%";
 
-            document.getElementById("dh-all-male-stat").innerHTML = "49%";
+            document.getElementById("dh-all-non-binary-stat").innerText = (payload.stats.total?.genderNonBinary || "-") + "%";
 
-            document.getElementById("dh-all-female-stat").innerHTML = "23%";
+            console.log(payload.stats)
+            if (allUndefined([payload.stats.uw?.genderMale, payload.stats.uw?.genderFemale, payload.stats.uw?.genderNonBinary])) {
+                document.getElementById("gender-stats-uw-col").style.display = 'none';
 
-            document.getElementById("dh-all-non-binary-stat").innerHTML = "1%";
+                document.getElementById("gender-stats-all-col").className = "col-sm-12";
+            } else {
+                document.getElementById("gender-stats-uw-col").style.display = 'initial';
 
-            document.getElementById("dh-uw-male-stat").innerHTML = "62%";
+                document.getElementById("gender-stats-all-col").className = "col-sm-6";
 
-            document.getElementById("dh-uw-female-stat").innerHTML = "35%";
+                document.getElementById("dh-uw-male-stat").innerText = (payload.stats.uw?.genderMale || "-") + '%';
 
-            document.getElementById("dh-uw-non-binary-stat").innerHTML = "0%";
+                document.getElementById("dh-uw-female-stat").innerText = (payload.stats.uw?.genderFemale || "-") + '%';
 
-            // Ethnicity
-
-            dh_all_ethnicity_chart.data.datasets[0].data = [43, 23, 14, 5, 4, 2, 2, 1, 0];
-            dh_all_ethnicity_chart.data.labels = ["East Asian or Asian-American", "South Asian or Asian-American", "White or Euro-American", "Other", "LatinX or Hispanic-American", "Black, Afro-Caribbean, or African-American", "Middle Eastern or North African", "Hawaiian or Pacific Islander", "Native American or Alaskan Native"];
-            dh_all_ethnicity_chart.update();
-
-            dh_uw_ethnicity_chart.data.datasets[0].data = [49, 21, 14, 4, 3, 1, 1, 1, 6];
-            dh_uw_ethnicity_chart.data.labels = ["East Asian or Asian-American", "South Asian or Asian-American", "White or Euro-American", "Other", "LatinX or Hispanic-American", "Black, Afro-Caribbean, or African-American", "Middle Eastern or North African", "Hawaiian or Pacific Islander", "Native American or Alaskan Native"];
-            dh_uw_ethnicity_chart.update();
+                document.getElementById("dh-uw-non-binary-stat").innerText = (payload.stats.uw?.genderNonBinary || "-") + '%';
+            }
 
             // Class standing
 
-            document.getElementById("dh-freshman-stat").innerHTML = "31%";
+            if (allUndefined([payload.stats.total?.yearFreshman, payload.stats.total?.yearHighSchool, payload.stats.total?.yearSophomore, payload.stats.total?.yearJunior, payload.stats.total?.yearSenior])) {
+                // hide class stats
+                document.getElementById("class-stats").style.display = 'none';
+            } else {
+                document.getElementById("class-stats").style.display = 'block';
 
-            document.getElementById("dh-sophomore-stat").innerHTML = "30%";
+                document.getElementById("dh-highschool-stat").innerText = (payload.stats.total?.yearHighSchool || "-") + "%";
 
-            document.getElementById("dh-junior-stat").innerHTML = "23%";
+                document.getElementById("dh-freshman-stat").innerText = (payload.stats.total?.yearFreshman || "-") + "%";
 
-            document.getElementById("dh-senior-stat").innerHTML = "14%";
+                document.getElementById("dh-sophomore-stat").innerText = (payload.stats.total?.yearSophomore || "-") + "%";
+
+                document.getElementById("dh-junior-stat").innerText = (payload.stats.total?.yearJunior || "-") + "%";
+
+                document.getElementById("dh-senior-stat").innerText = (payload.stats.total?.yearSenior || "-") + "%";
+
+            }
+
+            
+            // Top Schools
+            let [schoolLabels, schoolData] = splitDict(payload.attendees.school);
+
+            console.log(schoolLabels, schoolData);
+            dh_schools_chart.data.labels = schoolLabels;
+            dh_schools_chart.data.datasets[0].data = schoolData
+            dh_schools_chart.update();
+
+            // Top Majors
+            let [majorLabels, majorData] = splitDict(payload.attendees.totalMajor);
+
+            dh_majors_chart.data.labels = majorLabels
+            dh_majors_chart.data.datasets[0].data = majorData
+            dh_majors_chart.update();
+
+            if (payload.attendees.careers === undefined) {
+                document.getElementById("career-interests").style.display = 'none';
+            } else {
+                document.getElementById("career-interests").style.display = 'flex';
+
+                let [careerLabels, careerData] = splitDict(payload.attendees.careers);
+
+                dh_careers_chart.data.labels = careerLabels
+                dh_careers_chart.data.datasets[0].data = careerData
+                dh_careers_chart.update();
+            }
+
+            // Ethnicity
+            let [totalEthnicityLabels, totalEthnicityData] = splitDict(payload.attendees.totalEthnicity);
+            dh_all_ethnicity_chart.data.labels = totalEthnicityLabels
+            dh_all_ethnicity_chart.data.datasets[0].data = totalEthnicityData
+            dh_all_ethnicity_chart.update();
+
+            if (allUndefined([payload.attendees.uwEthnicity, payload.attendees.totalEthnicity])) {
+                document.getElementById("ethnicity-stats").style.display = 'none';
+            } else if (payload.attendees.uwEthnicity === undefined) {
+                document.getElementById("ethnicity-stats").style.display = 'block';
+                document.getElementById("academic-stats-uw-col").style.display = 'none';
+
+                document.getElementById("academic-stats-all-col").className = "col-sm-12";
+            } else {
+                document.getElementById("ethnicity-stats").style.display = 'block';
+                document.getElementById("academic-stats-uw-col").style.display = 'initial';
+
+                document.getElementById("academic-stats-all-col").className = "col-sm-6";
+
+                let [uwEthnicityLabels, uwEthnicityData] = splitDict(payload.attendees.uwEthnicity);
+            
+                dh_uw_ethnicity_chart.data.labels = uwEthnicityLabels
+                dh_uw_ethnicity_chart.data.datasets[0].data =  uwEthnicityData
+                dh_uw_ethnicity_chart.update();
+            }
+               
+        }
+
+        function set2019Data() {
+            setData(2019);
+        }
+
+        function set2020Data() {
+            setData(2020);
         }
 
         function set2017Data() {
-            document.getElementById("year-dropdown-title-button").innerHTML = "<h6 data-year='2017' data-year-stats-id='dh-stats-2017' class='semi-medium-title'>DubHacks 2017</h6>";
-
-            // General Stats    
-
-            document.getElementById("dh-applicants-stat").innerHTML = "1800";
-
-            document.getElementById("dh-total-acceptance-stat").innerHTML = "63%";
-
-            document.getElementById("dh-uw-acceptance-stat").innerHTML = "79%";
-
-            document.getElementById("dh-first-gen-stat").innerHTML = "26%";
-
-            document.getElementById("dh-returning-stat").innerHTML = "21%";
-
-            // Top Schools
-
-            dh_schools_chart.data.datasets[0].data = [49, 4, 2, 2, 2];
-            dh_schools_chart.data.labels = ["University of Washington", "University of British Columbia", "UC Berkeley", "University of Waterloo", "University of Florida"];
-            dh_schools_chart.update();
-
-            // Top Majors
-
-            dh_majors_chart.data.datasets[0].data = [44, 6, 6, 2, 2];
-            dh_majors_chart.data.labels = ["Computer Science", "Computer Engineering", "Informatics", "Electrical Engineering", "Software Engineering"];
-            dh_majors_chart.update();
-
-            // Gender
-
-            document.getElementById("dh-all-male-stat").innerHTML = "70%";
-
-            document.getElementById("dh-all-female-stat").innerHTML = "28%";
-
-            document.getElementById("dh-all-non-binary-stat").innerHTML = "2%";
-
-            document.getElementById("dh-uw-male-stat").innerHTML = "69%";
-
-            document.getElementById("dh-uw-female-stat").innerHTML = "30%";
-
-            document.getElementById("dh-uw-non-binary-stat").innerHTML = "1%";
-
-            // Ethnicity
-
-            dh_all_ethnicity_chart.data.datasets[0].data = [37, 26, 21, 4, 6, 2, 2, 1, 0];
-            dh_all_ethnicity_chart.data.labels = ["East Asian or Asian-American", "South Asian or Asian-American", "White or Euro-American", "Other", "LatinX or Hispanic-American", "Black, Afro-Caribbean, or African-American", "Middle Eastern or North African", "Hawaiian or Pacific Islander", "Native American or Alaskan Native"];
-            dh_all_ethnicity_chart.update();
-
-            dh_uw_ethnicity_chart.data.datasets[0].data = [42, 22, 24, 4, 3, 1, 1, 2, 0];
-            dh_uw_ethnicity_chart.data.labels = ["East Asian or Asian-American", "South Asian or Asian-American", "White or Euro-American", "Other", "LatinX or Hispanic-American", "Black, Afro-Caribbean, or African-American", "Middle Eastern or North African", "Hawaiian or Pacific Islander", "Native American or Alaskan Native"];
-            dh_uw_ethnicity_chart.update();
-
-            // Class standing
-
-            document.getElementById("dh-freshman-stat").innerHTML = "30%";
-
-            document.getElementById("dh-sophomore-stat").innerHTML = "32%";
-
-            document.getElementById("dh-junior-stat").innerHTML = "24%";
-
-            document.getElementById("dh-senior-stat").innerHTML = "12%";
+            setData(2017);
         }
 
         function set2016Data() {
@@ -810,6 +868,10 @@
             document.getElementById("dh-senior-stat").innerHTML = "11%";
         }
 
-        set2019Data();
+        window.onload = () => {
+            console.log(data);
+            set2020Data();
+
+        };
     </script>
 </body>
